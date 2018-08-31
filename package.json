@@ -1,0 +1,26 @@
+{
+  "name": "nginx-vhost-manager",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "rimraf ./dist && mkdirp ./dist && pkg . --out-path ./dist",
+    "release-minor": "release-it minor -n",
+    "release-major": "release-it major -n",
+    "release-beta": "release-it --preRelease=beta -n"
+  },
+  "bin": "index.js",
+  "pkg": {
+    "targets": [
+      "node6-linux-x64",
+      "node6-linux-x86"
+    ]
+  },
+  "dependencies": {
+    "commander": "^2.17.1",
+    "handlebars": "^4.0.11",
+    "tld-extract": "^1.0.1"
+  },
+  "devDependencies": {
+    "pkg": "^4.3.4",
+    "release-it": "^7.6.0"
+  }
+}

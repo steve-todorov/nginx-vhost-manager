@@ -1,0 +1,13 @@
+{
+  "src": {
+    "tagName": "v%s",
+    "push": true
+  },
+  "github": {
+    "release": true,
+    "assets": "dist/*"
+  },
+  "npm": {
+    "publish": false
+  }
+}

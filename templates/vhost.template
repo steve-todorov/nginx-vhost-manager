@@ -1,0 +1,25 @@
+server {
+    ## Server settings
+    server_name     {{fqdn}} www.{{fqdn}};
+    {{#unless redirectToSsl}}
+
+    ## Log files
+    access_log  logs/{{domain}}/{{fqdn}}-access.log main;
+    error_log   logs/{{domain}}/{{fqdn}}-error.log warn;
+
+    ## Document root
+    root {{htdocs}}/{{domain}}/{{fqdn}};
+
+    ## Index
+    index index.html index.php;
+    {{/unless}}
+
+    location / {
+    {{#if redirectToSsl}}
+        return 301 https://$server_name$request_uri;
+    {{else}}
+        try_files $uri $uri/;
+    {{/if}}
+    }
+
+}
