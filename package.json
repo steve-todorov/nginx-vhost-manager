@@ -1,6 +1,6 @@
 {
   "name": "nginx-vhost-manager",
-  "version": "0.0.0",
+  "version": "0.0.1-beta.0",
   "scripts": {
     "build": "rimraf ./dist && mkdirp ./dist && pkg . --out-path ./dist",
     "release-minor": "release-it minor -n",
