@@ -20,12 +20,14 @@ program
     .option("--issue", "Issue a wildcard certificate", false)
     .option("--staging", "Issue a testing certificate", false)
     .option("--php", "Enable PHP support", false)
+    .option("--enable", "Enable domain after vhost is created", false)
     .action(function (domain, options) {
         const opts = {
             ssl: options.ssl,
             redirectToSsl: options.redirectToSsl,
             staging: options.staging,
             php: options.php,
+            enable: options.enable,
             htdocs: options.parent.htdocs,
             nginx: options.parent.nginx,
             reload: options.parent.reload
@@ -45,6 +47,18 @@ program
         };
 
         vhost.enableVhost(domain, opts);
+    })
+;
+
+program
+    .command('list')
+    .description('List enabled vhosts')
+    .action(function (options) {
+        const opts = {
+            nginx: options.parent.nginx,
+        };
+
+        vhost.listVhosts(opts);
     })
 ;
 

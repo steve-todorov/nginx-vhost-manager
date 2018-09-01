@@ -12,6 +12,7 @@ module.exports = {
         staging: false,
         redirectToSsl: false,
         php: false,
+        enable: false,
         htdocs: '/www',
         nginx: '/etc/nginx',
         reload: false
@@ -64,6 +65,10 @@ module.exports = {
                 console.log('Issuing wildcard certificate for ' + fqdn);
                 letsencrypt.issue(fqdn, {staging: opts.staging});
             }
+        }
+
+        if (opts.enable) {
+            this.enableVhost(fqdn, opts);
         }
 
         if (opts.reload) {
@@ -188,6 +193,43 @@ module.exports = {
 
         if (opts.reload) {
             commons.reloadNginx(true);
+        }
+    },
+    listVhosts: function (opts = {nginx: '/etc/nginx'}) {
+        const vhostPath = opts.nginx.replace(/\/$/, "") + "/enabled/";
+
+        console.log('Searching for enabled domains in ' + vhostPath + "...");
+        if (fs.existsSync(vhostPath)) {
+            let dirCont = fs.readdirSync(vhostPath);
+
+            let files = dirCont.filter(function (elm) {
+                return elm.match(/.*\.vhost(\.ssl)?/ig);
+            });
+
+            if(files.length > 0) {
+                sorted_hosts = [];
+                split_hosts = [];
+
+                for (f in files) {
+                    segments = files[f].split('.');
+                    segments.reverse();
+                    split_hosts.push(segments);
+                }
+
+                split_hosts.sort();
+
+                for (h in split_hosts) {
+                    split_hosts[h].reverse();
+                    sorted_hosts.push(split_hosts[h].join("."))
+                }
+
+                sorted_hosts.forEach((d) => console.log(' - ' + d))
+            } else {
+                console.log('No enabled domains have been found.');
+            }
+
+        } else {
+            console.error("Path " + vhostPath + " does not exist or is not accessible (permissions issue maybe?).");
         }
     }
 };
