@@ -97,8 +97,6 @@ program
     })
 ;
 
-program.on('command:*', function () {
-    program.help();
-});
+program.command('help', null, {isDefault: true, noHelp: true});
 
 program.parse(process.argv);
