@@ -207,11 +207,11 @@ module.exports = {
             });
 
             if(files.length > 0) {
-                sorted_hosts = [];
-                split_hosts = [];
+                let sorted_hosts = [];
+                let split_hosts = [];
 
                 for (f in files) {
-                    segments = files[f].split('.');
+                    let segments = files[f].split('.');
                     segments.reverse();
                     split_hosts.push(segments);
                 }

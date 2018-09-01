@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "rimraf ./dist && mkdirp ./dist && pkg . --out-path ./dist",
+    "release-patch": "release-it patch -n",
     "release-minor": "release-it minor -n",
     "release-major": "release-it major -n",
     "release-beta": "release-it --preRelease=beta -n"
