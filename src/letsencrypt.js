@@ -1,20 +1,23 @@
-const {spawn} = require('child_process');
-const commons = require('./commons');
+const {spawnSync} = require('child_process');
 
 module.exports = {
-    issue: function (fqdm, opts = {staging: false}) {
+    issue: async function (fqdm, opts = {staging: false}) {
         let acmeOptions = ['--dns', 'dns_cloudns', '--issue', '-d', fqdm, '-d', '*.' + fqdm, '--ocsp', '--force'];
         if (opts.staging) {
             acmeOptions.push('--staging')
         }
         console.log('acme.sh ' + acmeOptions.join(' '));
-        const child = spawn('acme.sh', acmeOptions);
-        commons.processOutput(child);
+        const child = spawnSync('acme.sh', acmeOptions, {stdio: 'inherit', shell: true});
+        if(child.error) {
+            process.exit(1)
+        }
     },
-    renew: function () {
+    renew: async function () {
         const acmeOptions = ['--renew-all'];
         console.log('acme.sh ' + acmeOptions.join(' '));
-        const child = spawn('acme.sh', acmeOptions);
-        commons.processOutput(child);
+        const child = spawnSync('acme.sh', acmeOptions, {stdio: 'inherit', shell: true});
+        if(child.error) {
+            process.exit(1)
+        }
     }
 };

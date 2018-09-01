@@ -1,11 +1,9 @@
 const program = require('commander');
-const {spawn} = require('child_process');
+const {spawnSync} = require('child_process');
 
 const vhost = require('./src/vhost.js');
-const commons = require('./src/commons');
 
 program
-    .version('0.1.0')
     .name('vhost-management')
     .option("--htdocs [path]", "Path to where each vhost should store per domain htdocs.", "/www")
     .option("--nginx [path]", "Path to nginx configuration files.", "/etc/nginx")
@@ -24,6 +22,7 @@ program
     .action(function (domain, options) {
         const opts = {
             ssl: options.ssl,
+            issue: options.issue,
             redirectToSsl: options.redirectToSsl,
             staging: options.staging,
             php: options.php,
@@ -92,11 +91,17 @@ program
         options.push('-v');
         options.push(opts.config);
 
-        const child = spawn('logrotate', options);
-        commons.processOutput(child);
+        const child = spawnSync('logrotate', options, {stdio: 'inherit', shell: true});
+        if(child.error) {
+            process.exit(1)
+        }
     })
 ;
 
-program.command('help', null, {isDefault: true, noHelp: true});
+program.command('help', null, {isDefault: true, noHelp: true}).action(() => program.help());
+
+if(process.argv.length <= 2) {
+    program.help();
+}
 
 program.parse(process.argv);

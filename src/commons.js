@@ -2,7 +2,7 @@ const path = require('path');
 const parser = require('tld-extract');
 const fs = require("fs");
 const readline = require('readline');
-const {spawn} = require('child_process');
+const {spawnSync} = require('child_process');
 
 module.exports = {
     mkdirRecursive: function (dir) {
@@ -21,8 +21,10 @@ module.exports = {
         if(log) {
             console.log("Reloading nginx...");
         }
-        const child = spawn('nginx', ['-s', 'reload']);
-        this.processOutput(child);
+        const child = spawnSync('nginx', ['-s', 'reload'], {stdio: 'inherit', shell: true});
+        if(child.error) {
+            process.exit(1)
+        }
     },
     processOutput: function (proc) {
         readline.createInterface({

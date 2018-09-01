@@ -62,17 +62,18 @@ module.exports = {
                 console.log("Generating " + vhostSSLConfPath);
                 this.generateSSLConf(fqdn, opts.nginx);
 
-                console.log('Issuing wildcard certificate for ' + fqdn);
-                letsencrypt.issue(fqdn, {staging: opts.staging});
+                if(opts.issue)
+                {
+                    console.log('Issuing wildcard certificate for ' + fqdn);
+                    letsencrypt.issue(fqdn, {staging: opts.staging});
+                }
             }
         }
 
         if (opts.enable) {
             this.enableVhost(fqdn, opts);
-        }
-
-        if (opts.reload) {
-            commons.reloadNginx(true);
+        } else if(opts.reload) {
+            commons.reloadNginx();
         }
 
     },
@@ -169,13 +170,14 @@ module.exports = {
 
     },
     disableVhost: function (fqdn, opts = {nginx: '/etc/nginx', reload: false}) {
-        const vhostPath = opts.nginx.replace(/\/$/, "") + "/enabled/" + fqdn + ".vhost";
-        const vhostSSLPath = opts.nginx.replace(/\/$/, "") + "/enabled/" + fqdn + ".vhost.ssl";
+        opts.nginx = opts.nginx.replace(/\/$/, "");
+        const vhostPath = opts.nginx + "/enabled/" + fqdn + ".vhost";
+        const vhostSSLPath = opts.nginx + "/enabled/" + fqdn + ".vhost.ssl";
 
         if (!fs.existsSync(vhostPath) && !fs.existsSync(vhostSSLPath)) {
-            console.error("Could not find none of the following files in " + vhostBasePath + "!");
-            console.error("  " + vhostPath);
-            console.error("  " + vhostSSLPath);
+            console.error("Could not find none of the following files in " + opts.nginx + "/enabled/" + ":");
+            console.error("  - " + vhostPath);
+            console.error("  - " + vhostSSLPath);
             console.error("Aborting!");
 
             process.exit(1)
