@@ -10,8 +10,8 @@
   "bin": "index.js",
   "pkg": {
     "targets": [
-      "node6-linux-x64",
-      "node6-linux-x86"
+      "node8-linux-x64",
+      "node8-alpine-x64"
     ]
   },
   "dependencies": {
@@ -20,7 +20,8 @@
     "tld-extract": "^1.0.1"
   },
   "devDependencies": {
-    "pkg": "^4.3.4",
-    "release-it": "^7.6.0"
+    "dockerpkg": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2"
   }
 }
