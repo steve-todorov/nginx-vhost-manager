@@ -1,4 +1,5 @@
 {
+  "beforeChangelogCommand": "sed -i 's#version(\"0.2.1\"#version(\"${version}\"#g' index.js && npm run build",
   "src": {
     "tagName": "v%s",
     "push": true
