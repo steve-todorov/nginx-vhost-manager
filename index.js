@@ -6,7 +6,7 @@ const letsencrypt = require('./src/letsencrypt');
 const commons = require('./src/commons');
 
 program
-    .name('vhost-management').version("0.2.2", '-v, --version')
+    .name('vhost-management').version("0.2.3", '-v, --version')
     .option("--htdocs [path]", "Path to where each vhost should store per domain htdocs.", "/www")
     .option("--nginx [path]", "Path to nginx configuration files.", "/etc/nginx")
     .option("--reload", "Reload nginx after operation.", false)
