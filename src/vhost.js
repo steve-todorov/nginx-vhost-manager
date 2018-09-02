@@ -10,6 +10,7 @@ module.exports = {
         ssl: false,
         issue: false,
         staging: false,
+        force: false,
         redirectToSsl: false,
         php: false,
         enable: false,

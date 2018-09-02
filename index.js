@@ -21,6 +21,7 @@ program
     .option("-i,--issue", "Issue a wildcard certificate", false)
     .option("-p,--php", "Enable PHP support", false)
     .option("-e,--enable", "Enable domain after vhost is created", false)
+    .option("-f,--force", "Force certificate issuing", false)
     .action(function (domain, options) {
         const opts = {
             ssl: options.ssl,
