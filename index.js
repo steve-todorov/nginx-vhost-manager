@@ -2,6 +2,8 @@ const program = require('commander');
 const {spawnSync} = require('child_process');
 
 const vhost = require('./src/vhost.js');
+const letsencrypt = require('./src/letsencrypt');
+const commons = require('./src/commons');
 
 program
     .name('vhost-management')
@@ -11,20 +13,21 @@ program
 ;
 
 program
-    .command('add <domain>')
+    .command('add <domain>').alias('a')
     .description('Add a new domain/subdomain to the vhosts')
-    .option("--ssl", "Enable SSL")
-    .option("--redirect-to-ssl", "Redirect http to https.", true)
-    .option("--issue", "Issue a wildcard certificate", false)
-    .option("--staging", "Issue a testing certificate", false)
-    .option("--php", "Enable PHP support", false)
-    .option("--enable", "Enable domain after vhost is created", false)
+    .option("-s,--ssl", "Enable SSL")
+    .option("-t,--staging", "Issue a testing certificate", false)
+    .option("-r,--redirect-to-ssl", "Redirect http to https.", true)
+    .option("-i,--issue", "Issue a wildcard certificate", false)
+    .option("-p,--php", "Enable PHP support", false)
+    .option("-e,--enable", "Enable domain after vhost is created", false)
     .action(function (domain, options) {
         const opts = {
             ssl: options.ssl,
             issue: options.issue,
             redirectToSsl: options.redirectToSsl,
             staging: options.staging,
+            force: options.force,
             php: options.php,
             enable: options.enable,
             htdocs: options.parent.htdocs,
@@ -37,7 +40,7 @@ program
 ;
 
 program
-    .command('enable <domain>')
+    .command('enable <domain>').alias('e')
     .description('Enable domain')
     .action(function (domain, options) {
         const opts = {
@@ -50,7 +53,7 @@ program
 ;
 
 program
-    .command('list')
+    .command('list').alias('l')
     .description('List enabled vhosts')
     .action(function (options) {
         const opts = {
@@ -62,7 +65,7 @@ program
 ;
 
 program
-    .command('disable <domain>')
+    .command('disable <domain>').alias('d')
     .description('Disable domain')
     .action(function (domain, options) {
         const opts = {
@@ -75,8 +78,8 @@ program
 ;
 
 program
-    .command('logrotate')
-    .description('Rotate logs.')
+    .command('logrotate').alias('lr')
+    .description('Rotate all domain logs.')
     .option('-c,--config <file>', 'Logrotate config file to use.', '/etc/logrotate.d/nginx.conf')
     .option('-f,--force', 'Force log rotation', false)
     .action(function (opts) {
@@ -84,7 +87,7 @@ program
 
         let options = [];
 
-        if(opts.force) {
+        if (opts.force) {
             options.push('-f')
         }
 
@@ -92,16 +95,45 @@ program
         options.push(opts.config);
 
         const child = spawnSync('logrotate', options, {stdio: 'inherit', shell: true});
-        if(child.error) {
+        if (child.error) {
             process.exit(1)
         }
     })
 ;
 
-program.command('help', null, {isDefault: true, noHelp: true}).action(() => program.help());
+program
+    .command('renew').alias('r')
+    .description('Renew all LetsEncrypt certificates that are due.')
+    .option("-s,--staging", "Issue a testing certificate", false)
+    .option("-f,--force", "Force issuing certificate", false)
+    .action(function (domain, opts) {
+        console.log('Renewing all issued certificates which are due...');
+        letsencrypt.renew(opts);
+    })
+;
 
-if(process.argv.length <= 2) {
+program
+    .command('issue <domain>').alias('i')
+    .description('Issue LetsEncrypt certificates')
+    .option("-s,--staging", "Issue a testing certificate", false)
+    .option("-f,--force", "Force issuing certificate", false)
+    .action(function (domain, opts) {
+        console.log('Issuing LetsEncrypt certificate for ' + domain + '...');
+        letsencrypt.issue(domain, opts);
+
+        if (opts.parent.reload) {
+            commons.reloadNginx();
+        }
+    })
+;
+
+if (process.argv.length <= 2) {
     program.help();
 }
+
+// Error on uknown commands
+program.on('command:*', function () {
+    program.help()
+});
 
 program.parse(process.argv);

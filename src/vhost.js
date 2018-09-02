@@ -65,7 +65,7 @@ module.exports = {
                 if(opts.issue)
                 {
                     console.log('Issuing wildcard certificate for ' + fqdn);
-                    letsencrypt.issue(fqdn, {staging: opts.staging});
+                    letsencrypt.issue(fqdn, {staging: opts.staging, force: opts.force});
                 }
             }
         }
