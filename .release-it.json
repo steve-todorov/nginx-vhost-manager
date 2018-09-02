@@ -2,8 +2,7 @@
   "beforeChangelogCommand": "sed -i 's#version(\".*\"#version(\"${version}\"#g' index.js && npm run build",
   "src": {
     "tagName": "v%s",
-    "push": true,
-    "afterReleaseCommand": "sed -i 's#version(\".*\"#version(\"${version}@dev\"#g' index.js && npm run build"
+    "push": true
   },
   "github": {
     "release": true,

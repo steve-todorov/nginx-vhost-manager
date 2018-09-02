@@ -1,7 +1,7 @@
 const {spawnSync} = require('child_process');
 
 module.exports = {
-    issue: function (fqdm, opts = {staging: false, force: false, parent: {reload: false}}) {
+    issue: function (fqdm, opts = {staging: false, force: false, reload: false}) {
         let acmeOptions = ['--dns', 'dns_cloudns', '--issue', '-d', fqdm, '-d', '*.' + fqdm, '--ocsp'];
         if (opts.staging) {
             acmeOptions.push('--staging')
@@ -9,7 +9,7 @@ module.exports = {
         if (opts.force) {
             acmeOptions.push('--force')
         }
-        if (!opts.staging && opts.parent.reload) {
+        if (!opts.staging && opts.reload) {
             acmeOptions.push('--renew-hook', "'nginx -s reload'")
         }
         console.log('acme.sh ' + acmeOptions.join(' '));
@@ -18,7 +18,7 @@ module.exports = {
             process.exit(1)
         }
     },
-    renew: function (opts = {staging: false, force: false, parent: {reload: false}}) {
+    renew: function (opts = {staging: false, force: false, reload: false}) {
         let acmeOptions = ['--renew-all'];
         if (opts.staging) {
             acmeOptions.push('--staging')
@@ -26,7 +26,7 @@ module.exports = {
         if (opts.force) {
             acmeOptions.push('--force')
         }
-        if (!opts.staging && opts.parent.reload) {
+        if (!opts.staging && opts.reload) {
             acmeOptions.push('--renew-hook', "'nginx -s reload'")
         }
         console.log('acme.sh ' + acmeOptions.join(' '));

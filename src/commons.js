@@ -41,6 +41,18 @@ module.exports = {
             console.log(line);
         });
     },
+    parseGlobalOptions: function(options) {
+        let opts = {
+            htdocs: options.parent.htdocs || "/www",
+            nginx: options.parent.nginx || "/etc/nginx",
+            reload: options.parent.reload || false
+        };
+
+        opts.htdocs = opts.htdocs.replace(/\/$/, "");
+        opts.nginx = opts.nginx.replace(/\/$/, "");
+
+        return opts;
+    },
     getDomain: function (url) {
         if (!url.match('^http')) {
             url = 'http://' + url;

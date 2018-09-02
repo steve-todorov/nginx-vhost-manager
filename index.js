@@ -24,16 +24,14 @@ program
     .option("-f,--force", "Force certificate issuing", false)
     .action(function (domain, options) {
         const opts = {
-            ssl: options.ssl,
-            issue: options.issue,
-            redirectToSsl: options.redirectToSsl,
-            staging: options.staging,
-            force: options.force,
-            php: options.php,
-            enable: options.enable,
-            htdocs: options.parent.htdocs,
-            nginx: options.parent.nginx,
-            reload: options.parent.reload
+            ssl: options.ssl || false,
+            issue: options.issue || false,
+            redirectToSsl: options.redirectToSsl || true,
+            staging: options.staging || false,
+            force: options.force || false,
+            php: options.php || false,
+            enable: options.enable || false,
+            ...commons.parseGlobalOptions(options)
         };
 
         vhost.createVhost(domain, opts);
@@ -44,11 +42,7 @@ program
     .command('enable <domain>').alias('e')
     .description('Enable domain')
     .action(function (domain, options) {
-        const opts = {
-            nginx: options.parent.nginx,
-            reload: options.parent.reload
-        };
-
+        const opts = commons.parseGlobalOptions(options);
         vhost.enableVhost(domain, opts);
     })
 ;
@@ -57,10 +51,7 @@ program
     .command('list').alias('l')
     .description('List enabled vhosts')
     .action(function (options) {
-        const opts = {
-            nginx: options.parent.nginx,
-        };
-
+        const opts = commons.parseGlobalOptions(options);
         vhost.listVhosts(opts);
     })
 ;
@@ -69,11 +60,7 @@ program
     .command('disable <domain>').alias('d')
     .description('Disable domain')
     .action(function (domain, options) {
-        const opts = {
-            nginx: options.parent.nginx,
-            reload: options.parent.reload
-        };
-
+        const opts = commons.parseGlobalOptions(options);
         vhost.disableVhost(domain, opts);
     })
 ;
@@ -107,7 +94,13 @@ program
     .description('Renew all LetsEncrypt certificates that are due.')
     .option("-s,--staging", "Issue a testing certificate", false)
     .option("-f,--force", "Force issuing certificate", false)
-    .action(function (domain, opts) {
+    .action(function (domain, options) {
+        const opts = {
+            staging: options.staging || false,
+            force: options.force || false,
+            ...commons.parseGlobalOptions(options)
+        };
+
         console.log('Renewing all issued certificates which are due...');
         letsencrypt.renew(opts);
     })
@@ -118,13 +111,15 @@ program
     .description('Issue LetsEncrypt certificates')
     .option("-s,--staging", "Issue a testing certificate", false)
     .option("-f,--force", "Force issuing certificate", false)
-    .action(function (domain, opts) {
+    .action(function (domain, options) {
+        const opts = {
+            staging: options.staging || false,
+            force: options.force || false,
+            ...commons.parseGlobalOptions(options)
+        };
+
         console.log('Issuing LetsEncrypt certificate for ' + domain + '...');
         letsencrypt.issue(domain, opts);
-
-        if (opts.parent.reload) {
-            commons.reloadNginx();
-        }
     })
 ;
 
