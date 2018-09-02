@@ -71,8 +71,10 @@ module.exports = {
         }
 
         if (opts.enable) {
-            this.enableVhost(fqdn, opts);
-        } else if(opts.reload) {
+            this.enableVhost(fqdn, {nginx: opts.nginx, reload: false});
+        }
+
+        if(opts.reload) {
             commons.reloadNginx();
         }
 

@@ -14,7 +14,7 @@ module.exports = {
         }
         console.log('acme.sh ' + acmeOptions.join(' '));
         const child = spawnSync('acme.sh', acmeOptions, {stdio: 'inherit', shell: true});
-        if (child.error) {
+        if (child.error || child.status > 0) {
             process.exit(1)
         }
     },
@@ -31,7 +31,7 @@ module.exports = {
         }
         console.log('acme.sh ' + acmeOptions.join(' '));
         const child = spawnSync('acme.sh', acmeOptions, {stdio: 'inherit', shell: true});
-        if (child.error) {
+        if (child.error || child.status > 0) {
             process.exit(1)
         }
     }

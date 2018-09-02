@@ -22,7 +22,7 @@ module.exports = {
             console.log("Reloading nginx...");
         }
         const child = spawnSync('nginx', ['-s', 'reload'], {stdio: 'inherit', shell: true});
-        if(child.error) {
+        if (child.error || child.status > 0) {
             process.exit(1)
         }
     },
